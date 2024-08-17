@@ -1,0 +1,179 @@
+{% block title %} notification {% endblock title %}
+
+{% block content %}
+
+<style>
+    tr.selected {
+          background-color: #d4edda;
+          border-color: #c3e6cb;
+      }
+    .pagination {
+          text-align: center;
+          margin-top: 20px;
+      }
+      .pagination a {
+          display: inline-block;
+          padding: 8px 16px;
+          text-decoration: none;
+          border: 1px solid #ddd;
+          margin: 0 4px;
+          color: #333;
+          border-radius: 4px;
+      }
+      .pagination a.active {
+        background-color: #FFC565;
+        color: #fff;
+      }
+</style>
+
+<!-- Header -->
+<div class="header bg-theme-light pb-9">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="headnumText justify-content-between">
+                <div class="pageTitleWrap">
+                    <h5>Notification</h5>
+                    <p>Lorem ipsum is placeholder text commonly used</p>
+                </div>
+                <div class="btnWrap">
+                    <a class="btn btn-primary" data-toggle="modal" data-target="#addNewNotification" href="#">Add New
+                        Notification
+                        <i class="icon-circle-plus"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Page content -->
+
+<div class="container-fluid mt--9">
+
+
+    <div class="tabsWrap position-relative">
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="" id="email-tab" data-toggle="tab" data-target="#ah" type="button" role="tab"
+                    aria-selected="false">Email
+                Notification
+            </button>
+        </div>
+    </div>
+
+    <div class="tab-pane fade show " id="ah" role="tabpanel">
+            <div class="card hptCard mt-1">
+                <div class="card-header border-0">
+                    <div class="headnumText justify-content-between">
+                        <div class="cardTitle">
+                            <h5 class="mb-0 d-flex align-items-center">Email Notification</h5>
+                        </div>
+                        <div class="tableSearchFilterWrap">
+                            <div class="tableSearch">
+                                <input type="text" placeholder="Search by client " value=""/>
+                                <button class="searchBtn"><i class="icon-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                        <thead class="thead-light">
+                        <tr>
+                            <th scope="col" class="sort" data-sort="name">SNo</th>
+                            <th scope="col" class="sort" data-sort="details">Title</th>
+                            <th width="30%" scope="col" class="sort" data-sort="employeeId">Message</th>
+                            <th scope="col">Date</th>
+                            <th scope="col" class="sort" data-sort="dishaCluster">Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody class="list">
+                        {% for items in email_data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <div class="tabletextellips">{{ items.title}}</div>
+                            </td>
+                            <td>
+                                <div class="tabletextellips tebleDescription">{{ items.description}}
+                                </div>
+                            </td>
+                            <td>{{ items.created_date | date:"d/m/Y" }}</td>
+                            {% if items.status %}
+                            <td><span class="action-badge badge-approved">Sent</span></td>
+                            {% else %}
+                            <td><a href="#" class="action-badge badge-initiated">Scheduled</a><br>
+                                <span class="color-danger ms-2 fs-12">{{items.schedule}}</span>
+                            </td>
+                            {% endif %}
+                            <td class="text-right">
+                                <div class="actionBtn-wrap">
+                                    <a href="" data-id="{{items.id}}"><i class="icon-edit"></i></a>
+                                    <button type="button" class="btn btn-info btn-sm view-email-btn" data-toggle="modal"
+                                            data-target="#notificationDetails" data-email-id="{{ items.id }}"
+                                            style="color: black; background: none; border: none; box-shadow: none;"><i
+                                            class="icon-eye"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Card footer for Pagination -->
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <div class="showFilter">
+                        <label>Show</label>
+                        <select id="items-per-page" onchange="updatePerPage()">
+                            <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+                            <option value="20" {% if per_page == 20 %}selected{% endif %}>20</option>
+                            <option value="30" {% if per_page == 30 %}selected{% endif %}>30</option>
+                        </select>
+                    </div>
+                    <!-- Card footer for Pagination -->
+                    <div class="pagination justify-content-end mb-0">
+
+                        <!-- Pagination links will be inserted here dynamically -->
+                        {% if email_data.has_previous %}
+                        <a href="?page=1">First</a>
+                        <a href="?page={{ email_data.previous_page_number }}">Previous</a>
+                        {% endif %}
+
+                        {% for num in email_data.paginator.page_range %}
+                        {% if email_data.number == num %}
+                        <a class="active" href="?page={{ num }}">{{ num }}</a>
+                        {% else %}
+                        <a href="?page={{ num }}">{{ num }}</a>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if email_data.has_next %}
+                        <a href="?page={{ email_data.next_page_number }}">Next</a>
+                        <a href="?page={{ email_data.paginator.num_pages }}">Last</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+    {% include "includes/footer.html" %}
+
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+<script>
+// Script for Email Notification Table
+    function updatePerPage() {
+        var perPage = document.getElementById('items-per-page').value;
+        window.location.href = '?page=1&per_page=' + perPage;
+    }
+</script>
+
+{% endblock javascripts %}
