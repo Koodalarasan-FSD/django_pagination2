@@ -136,21 +136,21 @@
 
                         <!-- Pagination links will be inserted here dynamically -->
                         {% if email_data.has_previous %}
-                        <a href="?page=1">First</a>
-                        <a href="?page={{ email_data.previous_page_number }}">Previous</a>
+                        <a href="?page=1&per_page={{ per_page }}">First</a>
+                        <a href="?page={{ email_data.previous_page_number }}&per_page={{ per_page }}">Previous</a>
                         {% endif %}
 
                         {% for num in email_data.paginator.page_range %}
                         {% if email_data.number == num %}
-                        <a class="active" href="?page={{ num }}">{{ num }}</a>
+                        <a class="active" href="?page={{ num }}&per_page={{ per_page }}">{{ num }}</a>
                         {% else %}
-                        <a href="?page={{ num }}">{{ num }}</a>
+                        <a href="?page={{ num }}&per_page={{ per_page }}">{{ num }}</a>
                         {% endif %}
                         {% endfor %}
 
                         {% if email_data.has_next %}
-                        <a href="?page={{ email_data.next_page_number }}">Next</a>
-                        <a href="?page={{ email_data.paginator.num_pages }}">Last</a>
+                        <a href="?page={{ email_data.next_page_number }}&per_page={{ per_page }}">Next</a>
+                        <a href="?page={{ email_data.paginator.num_pages }}&per_page={{ per_page }}">Last</a>
                         {% endif %}
                     </div>
                 </div>
